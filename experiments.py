@@ -2,6 +2,7 @@
 #constants = Block size(16 bytes), Replacement policy(LRU), string length
 #variables = Cache size, Associativity, Workload (sequential (no reuse), locality(small hot working set), conflict(all blocks collide on one set))
 
+import matplotlib.pyplot as plt
 from main import run_simulation
 from functions import calculate_rates
 
@@ -72,7 +73,42 @@ def print_table(results):
         print(f"{r['workload']:<12} {r['cache_size']:>5} {r['associativity']:>5} "
               f"{r['references']:>5} {r['hits']:>5} {r['misses']:>5} {r['hit_rate']:>8.2f}")
 
+def plot_results(results):
+    """One subplot per workload; one line per associativity."""
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4), sharey=True)
+    workloads = ["sequential", "locality", "conflict"]
+
+    colors = {1: "tab:blue", 2: "tab:orange", 4: "tab:green"}
+
+    for ax, wl in zip(axes, workloads):
+        for assoc in ASSOCIATIVITIES:
+            rows = [r for r in results
+                    if r["workload"] == wl and r["associativity"] == assoc]
+            rows.sort(key=lambda r: r["cache_size"])
+
+            sizes = [r["cache_size"] for r in rows]
+            rates = [r["hit_rate"] for r in rows]
+            ax.plot(sizes, rates,
+                    marker="o",
+                    color=colors[assoc],
+                    alpha=0.6,
+                    label=f"{assoc}-way")
+
+        ax.set_title(wl)
+        ax.set_xlabel("Cache size (bytes)")
+        ax.set_xticks(CACHE_SIZES)          # only mark the real sizes
+        ax.set_ylim(-5, 105)
+        ax.grid(True, alpha=0.3)
+        ax.legend()
+
+    axes[0].set_ylabel("Hit rate (%)")
+    fig.suptitle("Q14: Hit rate vs cache size and associativity")
+    fig.tight_layout()
+    fig.savefig("q14_graph.png", dpi=150)
+    print("Saved q14_graph.png")
+
 
 if __name__ == "__main__":
     results = run_experiment()
     print_table(results)
+    plot_results(results)

@@ -73,6 +73,7 @@ def print_table(results):
         print(f"{r['workload']:<12} {r['cache_size']:>5} {r['associativity']:>5} "
               f"{r['references']:>5} {r['hits']:>5} {r['misses']:>5} {r['hit_rate']:>8.2f}")
 
+#graphing function
 def plot_results(results):
     """One subplot per workload; one line per associativity."""
     fig, axes = plt.subplots(1, 3, figsize=(15, 4), sharey=True)
@@ -96,7 +97,7 @@ def plot_results(results):
 
         ax.set_title(wl)
         ax.set_xlabel("Cache size (bytes)")
-        ax.set_xticks(CACHE_SIZES)          # only mark the real sizes
+        ax.set_xticks(CACHE_SIZES)
         ax.set_ylim(-5, 105)
         ax.grid(True, alpha=0.3)
         ax.legend()

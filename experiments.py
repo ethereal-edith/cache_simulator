@@ -108,8 +108,16 @@ def plot_results(results):
     fig.savefig("q14_graph.png", dpi=150)
     print("Saved q14_graph.png")
 
+def print_table_tsv(results):
+    print("Workload\tCache size\tAssociativity\tReferences\tHits\tMisses\tHit rate")
+    for r in results:
+        print(f"{r['workload']}\t{r['cache_size']}\t{r['associativity']}\t"
+            f"{r['references']}\t{r['hits']}\t{r['misses']}\t{r['hit_rate']}")
+
 
 if __name__ == "__main__":
     results = run_experiment()
-    print_table(results)
+    print_table(results)      
+    print()
+    print_table_tsv(results)  
     plot_results(results)
